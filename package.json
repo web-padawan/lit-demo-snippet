@@ -1,17 +1,21 @@
 {
-  "name": "demo-snippet",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "@vaadin/demo-snippet",
+  "version": "0.0.0",
+  "description": "Prototyping demo snippet with lit-element",
+  "author": "Vaadin Ltd",
+  "license": "Apache-2.0",
+  "main": "lib/demo-snippet.js",
+  "module": "lib/demo-snippet.js",
   "scripts": {
     "build": "tsc",
     "dev": "yarn watch & yarn serve",
     "watch": "tsc-watch",
-    "serve": "es-dev-server --node-resolve"
+    "serve": "es-dev-server --node-resolve --port 8081"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "files": [
+    "src",
+    "lib"
+  ],
   "dependencies": {
     "lit-element": "^2.2.1",
     "lit-html": "^1.1.2",
