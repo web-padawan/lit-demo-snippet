@@ -19,8 +19,13 @@ import { fetchProject, fetchTemplate, importJs } from './util.js';
 
 import './demo-snippet-layout.js';
 
-// @ts-ignore
-const { highlight, languages } = Prism;
+declare global {
+  interface Window {
+    Prism: typeof import('prismjs');
+  }
+}
+
+const { highlight, languages } = window.Prism;
 
 import prismTheme from './prism-theme.js';
 

@@ -17,6 +17,7 @@
     "lib"
   ],
   "dependencies": {
+    "@types/prismjs": "^1.16.0",
     "lit-element": "^2.2.1",
     "lit-html": "^1.1.2",
     "prismjs": "^1.17.1"
