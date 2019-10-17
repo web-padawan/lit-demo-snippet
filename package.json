@@ -1,9 +1,9 @@
 {
-  "name": "@vaadin/demo-snippet",
+  "name": "lit-demo-snippet-poc",
   "version": "0.0.0",
   "description": "Prototyping demo snippet with lit-element",
-  "author": "Vaadin Ltd",
-  "license": "Apache-2.0",
+  "author": "Serhii Kulykov <iamkulykov@gmail.com>",
+  "license": "MIT",
   "main": "lib/demo-snippet.js",
   "module": "lib/demo-snippet.js",
   "scripts": {
