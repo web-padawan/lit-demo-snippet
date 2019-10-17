@@ -14,7 +14,7 @@ import 'prismjs/components/prism-js-templates.js';
 
 import { FileRecord } from './types.js';
 import { EMPTY_INDEX } from './constants.js';
-import { fetchProject } from './util.js';
+import { fetchProject, fetchTemplate } from './util.js';
 
 import './demo-snippet-layout.js';
 
@@ -26,13 +26,15 @@ import prismTheme from './prism-theme.js';
 @customElement('demo-snippet')
 export class DemoSnippet extends LitElement {
 
+  @property({ attribute: 'template-path', type: String })
+  templatePath?: string;
+
   @property({ attribute: 'project-path', type: String })
   projectPath?: string;
 
   private lastProjectPath?: string;
-  private projectContentsReady: Promise<FileRecord[]> = Promise.resolve([
-    EMPTY_INDEX
-  ]);
+  private snippetsReady: Promise<FileRecord[]> = Promise.resolve([ EMPTY_INDEX ]);
+  private templateReady: Promise<string> = Promise.resolve('');
 
   private async renderSnippets(
     projectFetched: Promise<FileRecord[]>
@@ -88,6 +90,12 @@ export class DemoSnippet extends LitElement {
           height: 350px;
         }
 
+        #output {
+          border: solid 1px #ccc;
+          margin-top: 1rem;
+          padding: 1rem;
+        }
+
         pre {
           margin: 0;
         }
@@ -95,19 +103,32 @@ export class DemoSnippet extends LitElement {
     ];
   }
 
+  private async renderTemplate(
+    templateFetched: Promise<string>
+  ): Promise<TemplateResult> {
+    const template = await templateFetched;
+    return html`${unsafeHTML(template)}`;
+  }
+
   render() {
-    const isNewProject = this.projectPath && this.lastProjectPath !== this.projectPath;
+    const isNewProject = this.projectPath &&
+      this.templatePath &&
+      this.lastProjectPath !== this.projectPath;
 
     if (isNewProject) {
       this.lastProjectPath = this.projectPath;
-      this.projectContentsReady = fetchProject(this.projectPath!);
+      this.snippetsReady = fetchProject(this.projectPath!);
+      this.templateReady = fetchTemplate(this.templatePath!);
     }
 
     return html`
       <div id="wrapper">
         <demo-snippet-layout>
-          ${until(this.renderSnippets(this.projectContentsReady))}
+          ${until(this.renderSnippets(this.snippetsReady))}
         </demo-snippet-layout>
+        <div id="output">
+          ${until(this.renderTemplate(this.templateReady))}
+        </div>
       </div>
     `;
   }

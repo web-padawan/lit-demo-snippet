@@ -93,3 +93,11 @@ export const fetchProject = async (
     return [EMPTY_INDEX];
   }
 };
+
+
+export const fetchTemplate = async (path: string): Promise<string> => {
+  const fileFetched = await fetch(path);
+  const textFetched = await fileFetched.text();
+
+  return textFetched;
+}
