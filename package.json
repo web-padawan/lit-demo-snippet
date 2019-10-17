@@ -1,0 +1,25 @@
+{
+  "name": "demo-snippet",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "yarn watch & yarn serve",
+    "watch": "tsc-watch",
+    "serve": "es-dev-server --node-resolve"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "lit-element": "^2.2.1",
+    "lit-html": "^1.1.2",
+    "prismjs": "^1.17.1"
+  },
+  "devDependencies": {
+    "es-dev-server": "^1.18.4",
+    "tsc-watch": "^4.0.0",
+    "typescript": "^3.6.4"
+  }
+}

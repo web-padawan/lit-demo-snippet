@@ -1,0 +1,8 @@
+{
+  "files": {
+    "example.js": {},
+    "example.html": {
+      "isTemplate": true
+    }
+  }
+}
