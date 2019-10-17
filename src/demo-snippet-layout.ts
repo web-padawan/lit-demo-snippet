@@ -2,9 +2,7 @@ import {
   LitElement,
   customElement,
   html,
-  css,
-  property,
-  query
+  css
 } from 'lit-element';
 
 @customElement('demo-snippet-layout')
@@ -42,6 +40,9 @@ export class DemoSnippetLayout extends LitElement {
 
       #snippets ::slotted([slot='code']) {
         width: 100%;
+        padding: 1rem;
+        border: solid 1px #ccc;
+        border-bottom: none;
       }
 
       #snippets ::slotted([slot='code']:not([selected])) {
@@ -82,10 +83,10 @@ export class DemoSnippetLayout extends LitElement {
       );
       if (classNames.length) {
         const className = classNames[0];
-        const textarea = this.querySelector(`.${className}[slot="code"]`);
+        const code = this.querySelector(`.${className}[slot="code"]`);
 
-        if (textarea) {
-          textarea.toggleAttribute('selected', true);
+        if (code) {
+          code.toggleAttribute('selected', true);
         }
       }
     }

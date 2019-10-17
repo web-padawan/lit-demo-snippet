@@ -36,6 +36,9 @@ export class DemoSnippet extends LitElement {
   @property({ attribute: 'js-path', type: String })
   jsPath?: string;
 
+  @property({ attribute: 'when-defined', type: String })
+  whenDefined?: string;
+
   @property({ type: Boolean }) initialized = false;
 
   @property({ type: Boolean }) imported = false;
@@ -54,10 +57,17 @@ export class DemoSnippet extends LitElement {
     let firstEditor = true;
     let index = 0;
 
-    const tabs: TemplateResult[] = fileRecords.map(fileRecord => {
+    // Sort so HTML comes first
+    const records = fileRecords.sort((a, b) => {
+      return a.extension < b.extension ? -1 : 1;
+    });
+
+    const tabs: TemplateResult[] = records.map(fileRecord => {
       let grammar;
 
-      switch (fileRecord.extension) {
+      const { extension } = fileRecord;
+
+      switch (extension) {
         case 'js':
           grammar = languages.javascript;
           break;
@@ -65,7 +75,19 @@ export class DemoSnippet extends LitElement {
           grammar = languages.markup;
       }
 
-      const formatted = unsafeHTML(highlight(fileRecord.content, grammar, fileRecord.extension));
+      let content = fileRecord.content;
+      if (extension === 'js') {
+        content = content.replace(/'(.+)(?=@vaadin)/g, `'`);
+
+        if (this.whenDefined) {
+          content = content.replace(
+            'export default (document => {',
+            `customElements.whenDefined('${this.whenDefined}').then(() => {`
+          );
+        }
+      }
+
+      const formatted = unsafeHTML(highlight(content, grammar, extension));
 
       const tResult = html`
         <span
@@ -73,14 +95,12 @@ export class DemoSnippet extends LitElement {
           class=${'link-' + index.toString()}
           ?selected=${firstEditor}
         >
-          ${fileRecord.extension}
+          ${extension}
         </span>
         <pre
           slot="code"
           class=${'link-' + index.toString()}
           ?selected=${firstEditor}
-          .name=${fileRecord.name}
-          .extension=${fileRecord.extension}
           ><code>${formatted}</code></pre>
       `;
 
@@ -98,12 +118,11 @@ export class DemoSnippet extends LitElement {
       css`
         :host {
           display: block;
-          height: 350px;
+          max-width: 800px;
         }
 
         #output {
           border: solid 1px #ccc;
-          margin-top: 1rem;
           padding: 1rem;
         }
 

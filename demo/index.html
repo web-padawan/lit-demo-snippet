@@ -5,10 +5,18 @@
   <script type="module" src="../lib/demo-snippet.js"></script>
 </head>
 <body>
+  <h3>Button</h3>
   <demo-snippet
-    project-path="./example"
-    template-path="./example/example.html"
-    js-path="/demo/example/example.js"
+    project-path="./button"
+    template-path="./button/button.html"
+  ></demo-snippet>
+
+  <h3>Disabled Button</h3>
+  <demo-snippet
+    project-path="./button-disabled"
+    template-path="./button-disabled/button-disabled.html"
+    js-path="/demo/button-disabled/button-disabled.js"
+    when-defined="vaadin-button"
   ></demo-snippet>
 </body>
 </html>
