@@ -1,3 +1,3 @@
 export default document => {
-  document.querySelector('button').classList.add('red');
+  document.querySelector('button').style.color = 'red';
 };

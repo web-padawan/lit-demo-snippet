@@ -100,4 +100,9 @@ export const fetchTemplate = async (path: string): Promise<string> => {
   const textFetched = await fileFetched.text();
 
   return textFetched;
-}
+};
+
+export const importJs = async (path: string): Promise<Function> => {
+  const imported = await import(path);
+  return imported.default;
+};

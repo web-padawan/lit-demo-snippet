@@ -5,6 +5,7 @@ import {
   css,
   property,
   TemplateResult,
+  PropertyValues,
 } from 'lit-element';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 import { until } from 'lit-html/directives/until';
@@ -14,7 +15,7 @@ import 'prismjs/components/prism-js-templates.js';
 
 import { FileRecord } from './types.js';
 import { EMPTY_INDEX } from './constants.js';
-import { fetchProject, fetchTemplate } from './util.js';
+import { fetchProject, fetchTemplate, importJs } from './util.js';
 
 import './demo-snippet-layout.js';
 
@@ -32,9 +33,19 @@ export class DemoSnippet extends LitElement {
   @property({ attribute: 'project-path', type: String })
   projectPath?: string;
 
+  @property({ attribute: 'js-path', type: String })
+  jsPath?: string;
+
+  @property({ type: Boolean }) initialized = false;
+
+  @property({ type: Boolean }) imported = false;
+
+  @property({ type: Boolean }) htmlReady = false;
+
   private lastProjectPath?: string;
   private snippetsReady: Promise<FileRecord[]> = Promise.resolve([ EMPTY_INDEX ]);
   private templateReady: Promise<string> = Promise.resolve('');
+  private jsImported: Promise<Function> = Promise.resolve(() => {});
 
   private async renderSnippets(
     projectFetched: Promise<FileRecord[]>
@@ -107,7 +118,11 @@ export class DemoSnippet extends LitElement {
     templateFetched: Promise<string>
   ): Promise<TemplateResult> {
     const template = await templateFetched;
-    return html`${unsafeHTML(template)}`;
+    return html`
+      <div id="output">
+        ${unsafeHTML(template)}
+      </div>
+    `;
   }
 
   render() {
@@ -118,7 +133,17 @@ export class DemoSnippet extends LitElement {
     if (isNewProject) {
       this.lastProjectPath = this.projectPath;
       this.snippetsReady = fetchProject(this.projectPath!);
-      this.templateReady = fetchTemplate(this.templatePath!);
+      this.templateReady = fetchTemplate(this.templatePath!).then(tpl => {
+        this.htmlReady = true;
+        return tpl;
+      });
+
+      if (this.jsPath) {
+        this.jsImported = importJs(this.jsPath!).then(cb => {
+          this.imported = true;
+          return cb;
+        });
+      }
     }
 
     return html`
@@ -126,10 +151,17 @@ export class DemoSnippet extends LitElement {
         <demo-snippet-layout>
           ${until(this.renderSnippets(this.snippetsReady))}
         </demo-snippet-layout>
-        <div id="output">
-          ${until(this.renderTemplate(this.templateReady))}
-        </div>
+        ${until(this.renderTemplate(this.templateReady))}
       </div>
     `;
+  }
+
+  async updated(props: PropertyValues) {
+    super.updated(props);
+
+    if ((props.has('imported') || props.has('htmlReady')) && this.htmlReady && this.imported) {
+      const cb = await this.jsImported;
+      cb(this.shadowRoot!.querySelector('#output'));
+    }
   }
 }
